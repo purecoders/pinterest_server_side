@@ -1,0 +1,27 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+use App\Tag;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::resource('/tag','TagController');
+Route::resource('/user','UserAdminController');
+Route::get('/manageTag','TagController@index');
+Route::get('/getTag/{search}','TagController@getRelatedTag');
+Route::get('/getUser/{search}','UserAdminController@getRelatedUser');
+
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
