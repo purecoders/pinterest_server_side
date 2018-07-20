@@ -37,7 +37,10 @@ class UserController extends Controller
         $user1 = User::where('email', '=', $email)->first();
         $user2 = User::where('user_name', '=', $user_name)->first();
 
+
+
         if ($user1 === null && $user2 === null) {
+
 
             $user = new User();
             $user->email = $email;
@@ -47,6 +50,7 @@ class UserController extends Controller
             $user->client_key = $client_key;
 
             $user->save();
+            echo 'hellof';
 
             $result = ["success" => 1, "token" => $token];
             $result = json_encode($result);

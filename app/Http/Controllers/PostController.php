@@ -12,8 +12,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
 
-use Intervention\Image\ImageServiceProvider;
-use Intervention\Image\Facades\Image as Image;
+//use Intervention\Image\ImageServiceProvider;
+//use Intervention\Image\Facades\Image as Image;
 
 class PostController extends Controller
 {
@@ -71,6 +71,7 @@ class PostController extends Controller
 //    $name = $json["name"];
 //    $image = $json["image"];
 
+    echo 'hello';
 
     $user = User::where('app_token', '=', $token)->first();
     if($user === null){
@@ -97,9 +98,9 @@ class PostController extends Controller
         $save_low = file_put_contents("uploads/images/". $image_name .'_low'.".JPG", $decodedImageLow);
 
         if($save !== false){
-          $image_url = "http://192.168.10.107/pinterest/"."uploads/images/".$image_name.".JPG";
+          $image_url = "http://ittiktak.com/pinterest/public/"."uploads/images/".$image_name.".JPG";
           //$image_url_low = Image::make($image_url)->resize(300,200)->save("uploads/images/". $image_name ."_low".".JPG");
-          $image_url_low = "http://192.168.10.107/pinterest/"."uploads/images/". $image_name ."_low".".JPG";
+          $image_url_low = "http://ittiktak.com/pinterest/public/"."uploads/images/". $image_name ."_low".".JPG";
 
           $post = new Post();
           $post->user_id = $user_id;
@@ -108,7 +109,7 @@ class PostController extends Controller
           $post->image_url_low = $image_url_low;
           $post->save();
 
-          $lastPostId = Post::orderBy('id','desc')->first()->id;
+          $lastPostId =$post->id;
 
 
           $postInfo = new PostInformations();
@@ -122,14 +123,17 @@ class PostController extends Controller
           }
 
           $result =["success"=>1];
+          echo json_encode($result);
+          exit();
 
 
 
         }else{
           $result =["success"=>0];
+          echo json_encode($result);
         }
 
-        echo json_encode($result);
+
 
         ///...
 
@@ -137,9 +141,10 @@ class PostController extends Controller
       } else {
 
         $result = ["success" => 0];
+        echo json_encode($result);
       }
 
-      echo json_encode($result);
+
     }
 
 
@@ -215,9 +220,9 @@ class PostController extends Controller
             $postsIndex[] = $post->id;
             $i++;
           }
-          if($i >= 200)break;
+          if($i >= 100)break;
         }
-        if($i >= 200)break;
+        if($i >= 100)break;
       }
 
       $posts = array();
