@@ -3,8 +3,8 @@
         Options -MultiViews -Indexes
     </IfModule>
 
-    RewriteEngine On
-   # RewriteBase /larashop/
+     RewriteEngine On
+     RewriteBase /lifemo/
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

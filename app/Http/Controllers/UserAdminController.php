@@ -18,7 +18,7 @@ class UserAdminController extends Controller
     public function index()
     {
         //
-        $users = DB::table('users')->orderBy('created_at', 'dsc')->where('deleted_at','=',null)->paginate(5);
+        $users = DB::table('users')->orderBy('created_at', 'desc')->where('deleted_at','=',null)->paginate(5);
         return View('users', ['users' => $users]);
     }
 	//Block User With Soft Delete

@@ -17,12 +17,12 @@ use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
-  public function getAllPosts(){
-    $json = file_get_contents('php://input');
-    $info = json_decode($json);
+  public function getAllPosts(Request $request){
+//    $json = file_get_contents('php://input');
+//    $info = json_decode($json);
 
-    $id = $info->id;
-    $count = $info->count;
+    $id = $request->id;
+    $count = $request->count;
 
     if($id == 0){
       $lastPost = Post::orderBy('id','desc')->first();
@@ -56,22 +56,21 @@ class PostController extends Controller
 
 
 
-  public function uploadPost(){
-    $json = file_get_contents('php://input');
-    $info = json_decode($json);
+  public function uploadPost(Request $request){
+//    $json = file_get_contents('php://input');
+//    $info = json_decode($json);
 
-    $token = $info->token;
-    $client_key = $info->client_key;
-    $image = $info->image;
-    $image_low = $info->image_low;
-    $description = $info->description;
-    $name = $info->name;
-    $tags_id = $info->tags_id;
+    $token = $request->token;
+    $client_key = $request->client_key;
+    $image = $request->image;
+    $image_low = $request->image_low;
+    $description = $request->description;
+    $name = $request->name;
+    $tags_id = $request->tags_id;
 
 //    $name = $json["name"];
 //    $image = $json["image"];
 
-    echo 'hello';
 
     $user = User::where('app_token', '=', $token)->first();
     if($user === null){
@@ -98,9 +97,9 @@ class PostController extends Controller
         $save_low = file_put_contents("uploads/images/". $image_name .'_low'.".JPG", $decodedImageLow);
 
         if($save !== false){
-          $image_url = "http://ittiktak.com/pinterest/public/"."uploads/images/".$image_name.".JPG";
+          $image_url = env('APP_URL') . "/uploads/images/".$image_name.".JPG";
           //$image_url_low = Image::make($image_url)->resize(300,200)->save("uploads/images/". $image_name ."_low".".JPG");
-          $image_url_low = "http://ittiktak.com/pinterest/public/"."uploads/images/". $image_name ."_low".".JPG";
+          $image_url_low = env('APP_URL') . "/uploads/images/". $image_name ."_low".".JPG";
 
           $post = new Post();
           $post->user_id = $user_id;
@@ -167,11 +166,11 @@ class PostController extends Controller
 
 
 
-  public function getSpecialPostWithId(){
-    $json = file_get_contents('php://input');
-    $Info = json_decode($json);
+  public function getSpecialPostWithId(Request $request){
+//    $json = file_get_contents('php://input');
+//    $Info = json_decode($json);
 
-    $id = $Info->id;
+    $id = $request->id;
     $post = Post::where('id', '=', $id)->first();
 
     if($post === null){
@@ -191,11 +190,11 @@ class PostController extends Controller
 
 
 
-  public function getSearchResult(){
-    $json = file_get_contents('php://input');
-    $tagJson = json_decode($json);
+  public function getSearchResult(Request $request){
+//    $json = file_get_contents('php://input');
+//    $tagJson = json_decode($json);
 
-    $tagText = $tagJson->text;
+    $tagText = $request->text;
 
     if(strlen($tagText) < 2){
       $result = ["success"=>0,"posts"=>""];
@@ -244,11 +243,11 @@ class PostController extends Controller
 
 
 
-  public function getRelatedPosts(){
-    $json = file_get_contents('php://input');
-    $Info = json_decode($json);
+  public function getRelatedPosts(Request $request){
+//    $json = file_get_contents('php://input');
+//    $Info = json_decode($json);
 
-    $id = $Info->id;
+    $id = $request->id;
     $post = Post::where('id', '=', $id)->first();
 
     if($post === null){
@@ -293,12 +292,12 @@ class PostController extends Controller
   }
 
 
-  public function getUserPosts(){
-    $json = file_get_contents('php://input');
-    $userInfo = json_decode($json);
+  public function getUserPosts(Request $request){
+//    $json = file_get_contents('php://input');
+//    $userInfo = json_decode($json);
 
-    $client_key = $userInfo->client_key;
-    $token = $userInfo->token;
+    $client_key = $request->client_key;
+    $token = $request->token;
 
     $user = User::where('app_token', '=', $token)->first();
 
@@ -334,13 +333,13 @@ class PostController extends Controller
   }
 
 
-  public function addPostSharedCount(){
-    $json = file_get_contents('php://input');
-    $userInfo = json_decode($json);
+  public function addPostSharedCount(Request $request){
+//    $json = file_get_contents('php://input');
+//    $userInfo = json_decode($json);
 
-    $token = $userInfo->token;
-    $client_key = $userInfo->client_key;
-    $post_id = $userInfo->post_id;
+    $token = $request->token;
+    $client_key = $request->client_key;
+    $post_id = $request->post_id;
 
 
     $user = User::where('app_token', '=', $token)->first();
@@ -373,14 +372,14 @@ class PostController extends Controller
     }
 
 
-  public function removeFromUserPosts(){
-      $json = file_get_contents('php://input');
-      $user_post_Info = json_decode($json);
+  public function removeFromUserPosts(Request $request){
+//      $json = file_get_contents('php://input');
+//      $user_post_Info = json_decode($json);
 
 
-      $token = $user_post_Info->token;
-      $clientKey = $user_post_Info->client_key;
-      $post_id = $user_post_Info->post_id;
+      $token = $request->token;
+      $clientKey = $request->client_key;
+      $post_id = $request->post_id;
 
       $user = User::where('app_token', '=', $token)->first();
 
@@ -419,9 +418,6 @@ class PostController extends Controller
 
       }
     }
-
-
-
 
 
 

@@ -13,12 +13,12 @@ use App\SavedPost;
 class SavedPostController extends Controller
 {
 
-  public function getSavedPost(){
-    $json = file_get_contents('php://input');
-    $userInfo = json_decode($json);
+  public function getSavedPost(Request $request){
+//    $json = file_get_contents('php://input');
+//    $userInfo = json_decode($json);
 
-    $token = $userInfo->token;
-    $clientKey = $userInfo->client_key;
+    $token = $request->token;
+    $clientKey = $request->client_key;
     $user = User::where('app_token', '=', $token)->first();
 
     if($user->client_key != $clientKey){
@@ -56,14 +56,14 @@ class SavedPostController extends Controller
   }
 
 
-  public function removeFromSavedPosts(){
-    $json = file_get_contents('php://input');
-    $user_post_Info = json_decode($json);
+  public function removeFromSavedPosts(Request $request){
+//    $json = file_get_contents('php://input');
+//    $user_post_Info = json_decode($json);
 
 
-    $token = $user_post_Info->token;
-    $clientKey = $user_post_Info->client_key;
-    $post_id = $user_post_Info->post_id;
+    $token = $request->token;
+    $clientKey = $request->client_key;
+    $post_id = $request->post_id;
 
     $user = User::where('app_token', '=', $token)->first();
 
@@ -95,14 +95,14 @@ class SavedPostController extends Controller
   }
 
 
-  public function addToSavedPosts(){
-    $json = file_get_contents('php://input');
-    $user_post_Info = json_decode($json);
+  public function addToSavedPosts(Request $request){
+//    $json = file_get_contents('php://input');
+//    $user_post_Info = json_decode($json);
 
 
-    $token = $user_post_Info->token;
-    $clientKey = $user_post_Info->client_key;
-    $post_id = $user_post_Info->post_id;
+    $token = $request->token;
+    $clientKey = $request->client_key;
+    $post_id = $request->post_id;
 
     $user = User::where('app_token', '=', $token)->first();
     $post = Post::find($post_id);

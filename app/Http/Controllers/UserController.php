@@ -21,17 +21,17 @@ class UserController extends Controller
     private $client_salt = "7c3d596ed03ab9116c547b0eb678b247";
 
 
-    public function signUpUser()
+    public function signUpUser(Request $request)
     {
 
         $json = file_get_contents('php://input');
         $userInfo = json_decode($json);
 
-        $email = $userInfo->email;
-        $user_name = $userInfo->user_name;
-        $password = $userInfo->password;
+        $email = $request->email;
+        $user_name = $request->user_name;
+        $password = $request->password;
         $password = md5($this->salt1 . $user_name . $password . $this->salt2);
-        $client_key = $userInfo->client_key;
+        $client_key = $request->client_key;
         $token = md5($user_name . $password . $this->salt1);
 
         $user1 = User::where('email', '=', $email)->first();
@@ -46,11 +46,11 @@ class UserController extends Controller
             $user->email = $email;
             $user->user_name = $user_name;
             $user->app_password = $password;
+            $user->password = $password;
             $user->app_token = $token;
             $user->client_key = $client_key;
 
             $user->save();
-            echo 'hellof';
 
             $result = ["success" => 1, "token" => $token];
             $result = json_encode($result);
@@ -69,13 +69,13 @@ class UserController extends Controller
     }
 
 
-    public function loginUserWithUserName()
+    public function loginUserWithUserName(Request $request)
     {
         $json = file_get_contents('php://input');
         $userInfo = json_decode($json);
 
-        $user_name = $userInfo->user_name;
-        $password = $userInfo->password;
+        $user_name = $request->user_name;
+        $password = $request->password;
         $password = md5($this->salt1 . $user_name . $password . $this->salt2);
         $token = md5($user_name . $password . $this->salt1);
 
@@ -105,14 +105,14 @@ class UserController extends Controller
     }
 
 
-    public function loginUserWithToken()
+    public function loginUserWithToken(Request $request)
     {
         $json = file_get_contents('php://input');
         $userInfo = json_decode($json);
 
-        $userName = $userInfo->user_name;
-        $token = $userInfo->token;
-        $client_key = $userInfo->client_key;
+        $userName = $request->user_name;
+        $token = $request->token;
+        $client_key = $request->client_key;
         $user = User::where('app_token', '=', $token)->first();
 
         if ($user === null) {
@@ -144,15 +144,15 @@ class UserController extends Controller
     }
 
 
-    public function changePassword()
+    public function changePassword(Request $request)
     {
         $json = file_get_contents('php://input');
         $userInfo = json_decode($json);
 
-        $user_name = $userInfo->user_name;
-        $old_password = $userInfo->old_password;
+        $user_name = $request->user_name;
+        $old_password = $request->old_password;
         $old_password = md5($this->salt1 . $user_name . $old_password . $this->salt2);
-        $new_password = $userInfo->new_password;
+        $new_password = $request->new_password;
 
         $user = User::where('user_name', '=', $user_name)->first();
 
@@ -186,12 +186,12 @@ class UserController extends Controller
     }
 
 
-    public function recoveryPassword()
+    public function recoveryPassword(Request $request)
     {
         $json = file_get_contents('php://input');
         $userInfo = json_decode($json);
 
-        $email = $userInfo->email;
+        $email = $request->email;
 
         $user = User::where('email', '=', $email)->first();
 
