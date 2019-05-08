@@ -23,8 +23,7 @@ class UserAdminController extends Controller
     }
 
     public function search(Request $request){
-      $users = User::where('name', 'like', '%'.$request->text .'%')
-        ->orWhere('user_name', 'like', '%'.$request->text .'%')
+      $users = User::where('user_name', 'like', '%'.$request->text .'%')
         ->orWhere('email', 'like', '%'.$request->text .'%')
         ->paginate(50);
       return View('users', ['users' => $users]);

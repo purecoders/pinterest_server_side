@@ -38,7 +38,6 @@
                             <thead class="thead-dark">
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
                                 <th>user_name</th>
                                 <th>Email</th>
                                 <th>Block</th>
@@ -50,7 +49,6 @@
                             @foreach($users as $key => $user)
                                 <tr>
                                     <td scope="row">{{++$key+(($users->currentPage()-1)*$users->perPage())}}</td>
-                                    <td>{{$user->name}}</td>
                                     <td>{{$user->user_name}}</td>
                                     <td>{{$user->email}}</td>
                                     <td class="tbl-tag-block">

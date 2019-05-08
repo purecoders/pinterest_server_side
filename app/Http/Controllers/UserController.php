@@ -43,7 +43,6 @@ class UserController extends Controller
             $user = new User();
             $user->email = $email;
             $user->user_name = $user_name;
-            $user->app_password = $password;
             $user->password = $password;
             $user->app_token = $token_key;
             $user->client_key = $client_key;
@@ -85,7 +84,7 @@ class UserController extends Controller
 
         } else {
 
-            if (Hash::check($password, $user->app_password)) {
+            if (Hash::check($password, $user->password)) {
                 $user->app_token = $token_key;
                 $user->save();
                 $result = ["success" => 1, "token" => $token];
@@ -154,13 +153,13 @@ class UserController extends Controller
 
         } else {
 
-            if (Hash::check($old_password, $user->app_password) ) {
+            if (Hash::check($old_password, $user->password) ) {
               $rand = $this->generateRandomString(4);
               $token_key = $rand . $user_name . $this->salt1;
               $token = Crypt::encryptString($token_key);
               $new_password = Hash::make($new_password);
               $user->app_token = $token_key;
-              $user->app_password = $new_password;
+              $user->password = $new_password;
               $user->save();
               $result = ["success" => 1, "token" => $token];
             } else {
@@ -192,7 +191,7 @@ class UserController extends Controller
             $user_name = $user->user_name;
 
             $new_password_plain = $this->generateRandomString();
-            $user->app_password = Hash::make($new_password_plain);
+            $user->password = Hash::make($new_password_plain);
             $user->save();
 
 

@@ -7,16 +7,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-	//Updated by pouya
     use SoftDeletes;
     protected $dates = ['deleted_at'];
     protected $fillable = [
-        'user_name', 'email', 'password',
+        'user_name', 'email', 'password', 'app_token', 'client_key'
     ];
 
 
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'app_token', 'client_key'
     ];
 
 
