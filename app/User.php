@@ -19,6 +19,7 @@ class User extends Authenticatable
     ];
 
 
+
     //copy salts
     private $salt1 = "e9442f0a5d95dec266d792d57d6224a";
     private $salt2 = "7cf826aac3823474203d9e8e83dd24d";
