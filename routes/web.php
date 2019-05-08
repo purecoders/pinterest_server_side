@@ -15,11 +15,14 @@ use App\Tag;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::resource('/tag','TagController');
-Route::resource('/user','UserAdminController');
-Route::get('/manageTag','TagController@index');
-Route::get('/getTag/{search}','TagController@getRelatedTag');
-Route::get('/getUser/{search}','UserAdminController@getRelatedUser');
+
+Route::middleware('auth')->group(function () {
+  Route::resource('/tag', 'TagController');
+  Route::resource('/user', 'UserAdminController');
+  Route::get('/manageTag', 'TagController@index');
+  Route::get('/getTag/{search}', 'TagController@getRelatedTag');
+  Route::get('/getUser/{search}', 'UserAdminController@getRelatedUser')->name('search-user');
+});
 
 
 Auth::routes();

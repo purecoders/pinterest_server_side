@@ -10,7 +10,9 @@ use App\User;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 
 //use Intervention\Image\ImageServiceProvider;
 //use Intervention\Image\Facades\Image as Image;
@@ -18,8 +20,6 @@ use Illuminate\Support\Facades\DB;
 class PostController extends Controller
 {
   public function getAllPosts(Request $request){
-//    $json = file_get_contents('php://input');
-//    $info = json_decode($json);
 
     $id = $request->id;
     $count = $request->count;
@@ -43,13 +43,6 @@ class PostController extends Controller
     $result=["success"=>1,"last_id"=>$lastId,"posts"=>$posts];
     echo json_encode($result);
 
-
-
-
-//    $media =  Media::where('active', 1) // don't need the "="
-//    ->where('id', '>', $after)
-//      ->take(10)
-//      ->get();
   }
 
 
@@ -61,6 +54,7 @@ class PostController extends Controller
 //    $info = json_decode($json);
 
     $token = $request->token;
+    $token = Crypt::decryptString($token);
     $client_key = $request->client_key;
     $image = $request->image;
     $image_low = $request->image_low;
@@ -83,7 +77,7 @@ class PostController extends Controller
 
 
 
-      if ($user->client_key == $client_key) {
+      if (true) {
         $user_id = $user->id;
 
 
@@ -97,9 +91,9 @@ class PostController extends Controller
         $save_low = file_put_contents("uploads/images/". $image_name .'_low'.".JPG", $decodedImageLow);
 
         if($save !== false){
-          $image_url = env('APP_URL') . "/uploads/images/".$image_name.".JPG";
+          $image_url = URL::to('/') . "/uploads/images/".$image_name.".JPG";
           //$image_url_low = Image::make($image_url)->resize(300,200)->save("uploads/images/". $image_name ."_low".".JPG");
-          $image_url_low = env('APP_URL') . "/uploads/images/". $image_name ."_low".".JPG";
+          $image_url_low = URL::to('/') . "/uploads/images/". $image_name ."_low".".JPG";
 
           $post = new Post();
           $post->user_id = $user_id;
@@ -298,6 +292,7 @@ class PostController extends Controller
 
     $client_key = $request->client_key;
     $token = $request->token;
+    $token = Crypt::decryptString($token);
 
     $user = User::where('app_token', '=', $token)->first();
 
@@ -310,7 +305,7 @@ class PostController extends Controller
 
     }else{
 
-      if($user->client_key == $client_key){
+      if(true){
         $posts = $user->posts;
 
         foreach ($posts as $post){
@@ -338,6 +333,7 @@ class PostController extends Controller
 //    $userInfo = json_decode($json);
 
     $token = $request->token;
+    $token = Crypt::decryptString($token);
     $client_key = $request->client_key;
     $post_id = $request->post_id;
 
@@ -352,7 +348,7 @@ class PostController extends Controller
       echo $result;
 
     }else{
-      if($user->client_key == $client_key){
+      if(true){
 
         $postInfo = PostInformations:: where('post_id', '=', $post_id)->first();
         $postInfo->shared_count = $postInfo->shared_count + 1;
@@ -373,51 +369,41 @@ class PostController extends Controller
 
 
   public function removeFromUserPosts(Request $request){
-//      $json = file_get_contents('php://input');
-//      $user_post_Info = json_decode($json);
+    $token = $request->token;
+    $token = Crypt::decryptString($token);
+    $clientKey = $request->client_key;
+    $post_id = $request->post_id;
 
+    $user = User::where('app_token', '=', $token)->first();
 
-      $token = $request->token;
-      $clientKey = $request->client_key;
-      $post_id = $request->post_id;
-
-      $user = User::where('app_token', '=', $token)->first();
-
-      if($user->client_key != $clientKey){
-        $result = ["success"=>0];
-        echo json_encode($result);
-        exit();
-
-      }else {
-
-        $user_id = $user->id;
-        $post = Post::where('id', '=', $post_id)->first();
-        if($post === null){
-          $result = ["success"=>0];
-        }else if($post->user_id == $user_id) {
-          $post->delete();
-          $savedPosts = SavedPost::where('post_id', '=', $post_id)->get();
-          foreach ($savedPosts as $savedPost){
-            $savedPost->delete();
-          }
-
-          $postInfo = PostInformations::where('post_id', '=', $post_id)->first();
-          $postInfo->delete();
-
-          DB::delete("DELETE FROM post_tag WHERE post_id = '$post_id' ");
-
-
-
-
-          $result = ["success"=>1];
-        }else{
-          $result = ["success"=>0];
+    if($user != null) {
+      $user_id = $user->id;
+      $post = Post::where('id', '=', $post_id)->first();
+      if ($post === null) {
+        $result = ["success" => 0];
+      } else if ($post->user_id == $user_id) {
+        $post->delete();
+        $savedPosts = SavedPost::where('post_id', '=', $post_id)->get();
+        foreach ($savedPosts as $savedPost) {
+          $savedPost->delete();
         }
 
-        echo json_encode($result);
+        $postInfo = PostInformations::where('post_id', '=', $post_id)->first();
+        $postInfo->delete();
 
+        DB::delete("DELETE FROM post_tag WHERE post_id = '$post_id' ");
+
+
+        $result = ["success" => 1];
+      } else {
+        $result = ["success" => 0];
       }
+    }else{
+      $result = ["success" => 0];
     }
+
+    echo json_encode($result);
+  }
 
 
 

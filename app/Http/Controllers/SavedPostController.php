@@ -9,23 +9,16 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\SavedPost;
+use Illuminate\Support\Facades\Crypt;
 
 class SavedPostController extends Controller
 {
 
   public function getSavedPost(Request $request){
-//    $json = file_get_contents('php://input');
-//    $userInfo = json_decode($json);
-
     $token = $request->token;
+    $token = Crypt::decryptString($token);
     $clientKey = $request->client_key;
     $user = User::where('app_token', '=', $token)->first();
-
-    if($user->client_key != $clientKey){
-      $result = ["success"=>0,"posts"=>""];
-      echo json_encode($result);
-      exit();
-    }
 
 
     if($user === null){
@@ -57,21 +50,14 @@ class SavedPostController extends Controller
 
 
   public function removeFromSavedPosts(Request $request){
-//    $json = file_get_contents('php://input');
-//    $user_post_Info = json_decode($json);
-
-
     $token = $request->token;
+    $token = Crypt::decryptString($token);
     $clientKey = $request->client_key;
     $post_id = $request->post_id;
 
     $user = User::where('app_token', '=', $token)->first();
 
-    if($user->client_key != $clientKey){
-      $result = ["success"=>0];
-      echo json_encode($result);
-      exit();
-    }
+
 
     $savedPosts = $user->savedPost;
 
@@ -96,18 +82,15 @@ class SavedPostController extends Controller
 
 
   public function addToSavedPosts(Request $request){
-//    $json = file_get_contents('php://input');
-//    $user_post_Info = json_decode($json);
-
-
     $token = $request->token;
+    $token = Crypt::decryptString($token);
     $clientKey = $request->client_key;
     $post_id = $request->post_id;
 
     $user = User::where('app_token', '=', $token)->first();
     $post = Post::find($post_id);
 
-    if($user->client_key != $clientKey  ||  $post === null){
+    if($post === null){
       $result = ["success"=>0];
       echo json_encode($result);
       exit();

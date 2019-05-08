@@ -13,13 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 //app api
-
-
 
 //user
 Route::post('/v1/sign-up','UserController@signUpUser');

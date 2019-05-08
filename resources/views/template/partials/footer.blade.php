@@ -41,12 +41,12 @@
             var btnDelete = btnDeletes[i];
             btnEdit.onclick = function () {
                 document.getElementById('edit-modal-tag-name').value = tbl.rows[this.parentNode.rowIndex].cells[2].innerHTML;
-                document.getElementById('edit-form').action = "http://localhost/larashop/tag/" + tbl.rows[this.parentNode.rowIndex].cells[1].innerHTML;
+                document.getElementById('edit-form').action = {{\Illuminate\Support\Facades\URL::to('/')}}"/tag/" + tbl.rows[this.parentNode.rowIndex].cells[1].innerHTML;
 
             }
             btnDelete.onclick = function () {
                 document.getElementById('delete-modal-tag-name').innerText = tbl.rows[this.parentNode.rowIndex].cells[2].innerHTML;
-                document.getElementById('delete-form').action = "http://localhost/larashop/tag/" + tbl.rows[this.parentNode.rowIndex].cells[1].innerHTML;
+                document.getElementById('delete-form').action = "{{\Illuminate\Support\Facades\URL::to('/')}}/tag/" + tbl.rows[this.parentNode.rowIndex].cells[1].innerHTML;
 
             }
         }
@@ -58,9 +58,9 @@
             } else {
                 if (inTagPage) {
 
-                    this.href = "http://localhost/larashop/getTag/" + document.getElementById('input-search').value;
+                    this.href = "{{\Illuminate\Support\Facades\URL::to('/')}}/getTag/" + document.getElementById('input-search').value;
                 }else{
-                    this.href = "http://localhost/larashop/getUser/" + document.getElementById('input-search').value;
+                    this.href = "{{\Illuminate\Support\Facades\URL::to('/')}}/getUser/" + document.getElementById('input-search').value;
                 }
 
             }
@@ -72,7 +72,7 @@
             btnBlock.onclick = function () {
 
                 document.getElementById('block-modal-user-name').innerText = tbl.rows[this.parentNode.rowIndex].cells[1].innerHTML;
-                document.getElementById('block-form').action = "http://localhost/larashop/user/" + tbl.rows[this.parentNode.rowIndex].cells[2].innerHTML;
+                document.getElementById('block-form').action = "{{\Illuminate\Support\Facades\URL::to('/')}}/user/" + tbl.rows[this.parentNode.rowIndex].cells[2].innerHTML;
             }
         }
 

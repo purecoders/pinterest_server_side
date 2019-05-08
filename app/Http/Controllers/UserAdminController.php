@@ -46,4 +46,7 @@ class UserAdminController extends Controller
             ->paginate(5);
         return View('users', ['users' => $users]);
     }
+
+
+
 }

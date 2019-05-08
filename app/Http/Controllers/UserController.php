@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Mail\newPasswordMail;
 use App\User;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Http\Request;
@@ -23,16 +25,14 @@ class UserController extends Controller
 
     public function signUpUser(Request $request)
     {
-
-        $json = file_get_contents('php://input');
-        $userInfo = json_decode($json);
-
         $email = $request->email;
         $user_name = $request->user_name;
         $password = $request->password;
-        $password = md5($this->salt1 . $user_name . $password . $this->salt2);
+        $password = Hash::make($password);
         $client_key = $request->client_key;
-        $token = md5($user_name . $password . $this->salt1);
+        $rand = $this->generateRandomString(4);
+        $token_key = $rand . md5($user_name) ;
+        $token = Crypt::encryptString($token_key);
 
         $user1 = User::where('email', '=', $email)->first();
         $user2 = User::where('user_name', '=', $user_name)->first();
@@ -40,14 +40,12 @@ class UserController extends Controller
 
 
         if ($user1 === null && $user2 === null) {
-
-
             $user = new User();
             $user->email = $email;
             $user->user_name = $user_name;
             $user->app_password = $password;
             $user->password = $password;
-            $user->app_token = $token;
+            $user->app_token = $token_key;
             $user->client_key = $client_key;
 
             $user->save();
@@ -71,13 +69,11 @@ class UserController extends Controller
 
     public function loginUserWithUserName(Request $request)
     {
-        $json = file_get_contents('php://input');
-        $userInfo = json_decode($json);
-
         $user_name = $request->user_name;
         $password = $request->password;
-        $password = md5($this->salt1 . $user_name . $password . $this->salt2);
-        $token = md5($user_name . $password . $this->salt1);
+        $rand = $this->generateRandomString(4);
+        $token_key = $rand . $user_name . $this->salt1;
+        $token = Crypt::encryptString($token_key);
 
         $user = User::where('user_name', '=', $user_name)->first();
 
@@ -89,8 +85,8 @@ class UserController extends Controller
 
         } else {
 
-            if ($user->app_password == $password) {
-                $user->app_token = $token;
+            if (Hash::check($password, $user->app_password)) {
+                $user->app_token = $token_key;
                 $user->save();
                 $result = ["success" => 1, "token" => $token];
             } else {
@@ -107,13 +103,11 @@ class UserController extends Controller
 
     public function loginUserWithToken(Request $request)
     {
-        $json = file_get_contents('php://input');
-        $userInfo = json_decode($json);
-
         $userName = $request->user_name;
         $token = $request->token;
         $client_key = $request->client_key;
-        $user = User::where('app_token', '=', $token)->first();
+        $token_key = Crypt::decryptString($token);
+        $user = User::where('app_token', '=', $token_key)->first();
 
         if ($user === null) {
 
@@ -146,12 +140,8 @@ class UserController extends Controller
 
     public function changePassword(Request $request)
     {
-        $json = file_get_contents('php://input');
-        $userInfo = json_decode($json);
-
         $user_name = $request->user_name;
         $old_password = $request->old_password;
-        $old_password = md5($this->salt1 . $user_name . $old_password . $this->salt2);
         $new_password = $request->new_password;
 
         $user = User::where('user_name', '=', $user_name)->first();
@@ -164,15 +154,15 @@ class UserController extends Controller
 
         } else {
 
-            if ($user->app_password == $old_password) {
-                $token = md5($user_name . $new_password . $this->salt1);
-                $new_password = md5($this->salt1 . $user_name . $new_password . $this->salt2);
-
-                $user->app_token = $token;
-                $user->app_password = $new_password;
-                $user->save();
-
-                $result = ["success" => 1, "token" => $token];
+            if (Hash::check($old_password, $user->app_password) ) {
+              $rand = $this->generateRandomString(4);
+              $token_key = $rand . $user_name . $this->salt1;
+              $token = Crypt::encryptString($token_key);
+              $new_password = Hash::make($new_password);
+              $user->app_token = $token_key;
+              $user->app_password = $new_password;
+              $user->save();
+              $result = ["success" => 1, "token" => $token];
             } else {
                 $result = ["success" => 0, "token" => ""];
             }
@@ -188,9 +178,6 @@ class UserController extends Controller
 
     public function recoveryPassword(Request $request)
     {
-        $json = file_get_contents('php://input');
-        $userInfo = json_decode($json);
-
         $email = $request->email;
 
         $user = User::where('email', '=', $email)->first();
@@ -205,10 +192,7 @@ class UserController extends Controller
             $user_name = $user->user_name;
 
             $new_password_plain = $this->generateRandomString();
-            $new_password_client_hash = md5(md5($new_password_plain) . $this->client_salt);
-            $new_password_server_hash = md5($this->salt1 . $user_name . $new_password_client_hash . $this->salt2);
-
-            $user->app_password = $new_password_server_hash;
+            $user->app_password = Hash::make($new_password_plain);
             $user->save();
 
 

@@ -9,7 +9,7 @@
                     <div class="input-group">
                         <input id="input-search" type="text" class="form-control" placeholder="Search">
                         <div class="input-group-append">
-                            <a href="" id="btn-search" class="btn btn-primary">Search</a>
+                            <a href="{{'/getUser/{search}'}}"  class="btn btn-primary">Search</a>
                         </div>
                     </div>
                 </div>
