@@ -71,7 +71,7 @@ class UserController extends Controller
         $user_name = $request->user_name;
         $password = $request->password;
         $rand = $this->generateRandomString(4);
-        $token_key = $rand . $user_name . $this->salt1;
+        $token_key = $rand . md5($user_name);
         $token = Crypt::encryptString($token_key);
 
         $user = User::where('user_name', '=', $user_name)->first();
