@@ -6,12 +6,21 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 ml-auto">
-                    <div class="input-group">
-                        <input id="input-search" type="text" class="form-control" placeholder="Search">
-                        <div class="input-group-append">
-                            <a href="{{'/getUser/{search}'}}"  class="btn btn-primary">Search</a>
-                        </div>
+
+
+                    <div class="row">
+                        <form action="{{url('user-search')}}" method="post">
+                            @csrf
+
+                            <div class="input-group">
+                                <input name="text" type="text" class="form-control" placeholder="Search">
+                                <div class="input-group-append">
+                                    <input type="submit"  class="btn btn-primary" value="search">
+                                </div>
+                            </div>
+                        </form>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -30,7 +39,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
-                                <th>userId</th>
+                                <th>user_name</th>
                                 <th>Email</th>
                                 <th>Block</th>
                                 <th></th>
@@ -41,14 +50,14 @@
                             @foreach($users as $key => $user)
                                 <tr>
                                     <td scope="row">{{++$key+(($users->currentPage()-1)*$users->perPage())}}</td>
+                                    <td>{{$user->name}}</td>
                                     <td>{{$user->user_name}}</td>
-                                    <td>{{$user->id}}</td>
                                     <td>{{$user->email}}</td>
                                     <td class="tbl-tag-block">
-                                        <button class="btn btn-danger" data-toggle="modal"
-                                                data-target="#blockUserModal">
+
+                                        <a class="btn btn-danger" href="{{url('user-delete', $user->id)}}">
                                             <i class="fa fa-ban"></i> Block
-                                        </button>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach

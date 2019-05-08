@@ -35,12 +35,16 @@
                 </div>
                 <div class="col-md-6">
                     <div class="row">
+                        <form action="{{url('tag-search')}}" method="post">
+                        @csrf
                         <div class="input-group">
-                            <input id="input-search" type="text" class="form-control" placeholder="Search">
+
+                            <input name="text" type="text" class="form-control" placeholder="Search">
                             <div class="input-group-append">
-                                <a id="btn-search" href="" class="btn btn-primary">Search</a>
+                                <input type="submit"  class="btn btn-primary" value="search">
                             </div>
                         </div>
+                            </form>
                     </div>
                 </div>
             </div>
@@ -62,7 +66,6 @@
                                 <th>#</th>
                                 <th id="tag-id">tag-id</th>
                                 <th>Title</th>
-                                <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
                             </thead>
@@ -73,16 +76,10 @@
                                     <td scope="row">{{++$key+(($tags->currentPage()-1)*$tags->perPage())}}</td>
                                     <td>{{$tag->id}}</td>
                                     <td>{{$tag->name}}</td>
-                                    <td class="tbl-tag-edit">
-                                        <button class="btn btn-primary" data-toggle="modal" data-target="#editTagModal">
-                                            <i class="fa fa-edit"></i> edit
-                                        </button>
-                                    </td>
                                     <td class="tbl-tag-delete">
-                                        <button class="btn btn-danger" data-toggle="modal"
-                                                data-target="#deleteTagModal">
+                                        <a class="btn btn-danger" href="{{url('tag-delete', $tag->id)}}" >
                                             <i class="fa fa-remove"></i> delete
-                                        </button>
+                                        </a>
                                     </td>
                                 </tr>
 

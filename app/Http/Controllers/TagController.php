@@ -13,6 +13,17 @@ class TagController extends Controller
 {
 
 
+  public function tagDelete($id){
+    Tag::find($id)->delete();
+    return back();
+  }
+
+  public function tagSearch(Request $request){
+    $tags = Tag::where('name', 'like', '%' . $request->text . '%')->paginate(30);
+    return View('tags', ['tags' => $tags]);
+  }
+
+
   public function getAllTags(){
     $tags = Tag::orderBy('id','desc')->get();
     $result = ["success"=>1,"tags"=>$tags];
@@ -26,7 +37,7 @@ class TagController extends Controller
   public function index()
   {
     //
-    $tags = DB::table('tags')->orderBy('created_at', 'dsc')->paginate(5);
+    $tags = DB::table('tags')->orderBy('created_at', 'dsc')->paginate(30);
     return View('tags', ['tags' => $tags]);
   }
 

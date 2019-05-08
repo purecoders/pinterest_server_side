@@ -2,7 +2,7 @@
 {{--navigation bar--}}
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
     <div class="container">
-        <a href="index.html" class="navbar-brand"><i class="fa fa-gear"></i> Control Panel</a>
+        <a href="{{url('tag')}}" class="navbar-brand"><i class="fa fa-gear"></i> Control Panel</a>
         <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -22,13 +22,11 @@
 
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault();
-                                                     document.getElementById('logout-forlarashopm').submit();">
-                        <i class="fa fa-user-times"></i> Logout
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+
+                        <form  action="{{ route('logout') }}" method="POST" style="">
                             @csrf
+                            <input type="submit" value="logout">
                         </form>
-                    </a>
                 </li>
             </ul>
         </div>

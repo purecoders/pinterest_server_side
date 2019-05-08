@@ -15,10 +15,26 @@ class UserAdminController extends Controller
     {
         $this->middleware('auth');
     }
+
+
+    public function userDelete($id){
+      User::find($id)->delete();
+      return back();
+    }
+
+    public function search(Request $request){
+      $users = User::where('name', 'like', '%'.$request->text .'%')
+        ->orWhere('user_name', 'like', '%'.$request->text .'%')
+        ->orWhere('email', 'like', '%'.$request->text .'%')
+        ->paginate(50);
+      return View('users', ['users' => $users]);
+    }
+
+
     public function index()
     {
         //
-        $users = DB::table('users')->orderBy('created_at', 'desc')->where('deleted_at','=',null)->paginate(5);
+        $users = DB::table('users')->orderBy('created_at', 'desc')->where('deleted_at','=',null)->paginate(50);
         return View('users', ['users' => $users]);
     }
 	//Block User With Soft Delete
